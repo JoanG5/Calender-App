@@ -3,6 +3,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Event from "./Event";
+import Sidebar from "./Sidebar";
+import CalendarHeader from "./CalendarHeader";
+import { useState } from "react";
 
 const generateTimeSlots = () => {
   const slots = [];
@@ -44,6 +47,8 @@ export default function DayCalendar() {
   const timeColumnRef = useRef(null);
   const scrollAreaRef = useRef(null);
 
+  const [view, setView] = useState("day");
+
   const navigateDay = (days) => {
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() + days);
@@ -70,52 +75,42 @@ export default function DayCalendar() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen w-full mx-auto p-4">
-      <header className="flex justify-between items-center mb-4">
-        <Button variant="outline" size="icon" onClick={() => navigateDay(-1)}>
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Previous Day</span>
-        </Button>
-        <h1 className="text-2xl font-semibold">
-          {currentDate.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </h1>
-        <Button variant="outline" size="icon" onClick={() => navigateDay(1)}>
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Next Day</span>
-        </Button>
-      </header>
+    <div className="flex flex-col h-screen w-full">
+      <CalendarHeader
+        currentDate={currentDate}
+        onDateChange={setCurrentDate}
+        onViewChange={setView}
+      />
       <div className="flex flex-1 overflow-hidden">
-        <ScrollArea className="flex-1" ref={scrollAreaRef}>
-          <div className="flex" style={{ height: `${24 * 5}rem` }}>
-            <div className="w-16 flex-shrink-0">
-              {generateTimeSlots().map((time, index) => (
-                <div
-                  key={time}
-                  className="h-20 flex items-center justify-center text-sm text-gray-500"
-                >
-                  {time}
-                </div>
-              ))}
+        <Sidebar currentDate={currentDate} onDateChange={setCurrentDate} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <ScrollArea className="flex-1">
+            <div className="flex" style={{ height: `${24 * 5}rem` }}>
+              <div className="w-16 flex-shrink-0">
+                {generateTimeSlots().map((time, index) => (
+                  <div
+                    key={time}
+                    className="h-20 flex items-center justify-center text-sm text-gray-500"
+                  >
+                    {time}
+                  </div>
+                ))}
+              </div>
+              <div className="flex-1 relative">
+                {generateTimeSlots().map((time, index) => (
+                  <div
+                    key={time}
+                    className="absolute w-full h-20 border-t border-gray-200"
+                    style={{ top: `${index * 5}rem` }}
+                  ></div>
+                ))}
+                {events.map((event) => (
+                  <Event key={event.id} event={event} />
+                ))}
+              </div>
             </div>
-            <div className="flex-1 relative">
-              {generateTimeSlots().map((time, index) => (
-                <div
-                  key={time}
-                  className="absolute w-full h-20 border-t border-gray-200"
-                  style={{ top: `${index * 5}rem` }}
-                ></div>
-              ))}
-              {events.map((event) => {
-                return <Event key={event.id} event={event} />;
-              })}
-            </div>
-          </div>
-        </ScrollArea>
+          </ScrollArea>
+        </div>
       </div>
     </div>
   );
