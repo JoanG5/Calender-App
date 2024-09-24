@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import DayCalendar from "../../components/day-calendar";
+import DayCalendar from "../../components/Day-calendar";
 
 function page() {
   return (

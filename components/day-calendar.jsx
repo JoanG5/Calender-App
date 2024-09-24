@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Event from "./Event";
 
-// Helper function to generate time slots
 const generateTimeSlots = () => {
   const slots = [];
   for (let i = 0; i < 24; i++) {
@@ -12,11 +12,11 @@ const generateTimeSlots = () => {
   return slots;
 };
 
-// Sample events data
 const events = [
   {
     id: 1,
     title: "Team Meeting",
+    description: "Weekly team sync-up",
     start: "09:00",
     end: "10:00",
     color: "bg-blue-500",
@@ -24,6 +24,7 @@ const events = [
   {
     id: 2,
     title: "Lunch with Client",
+    description: "Discuss project requirements",
     start: "12:30",
     end: "13:30",
     color: "bg-green-500",
@@ -31,6 +32,7 @@ const events = [
   {
     id: 3,
     title: "Project Review",
+    description: "End of sprint review",
     start: "15:00",
     end: "16:30",
     color: "bg-purple-500",
@@ -109,29 +111,7 @@ export default function DayCalendar() {
                 ></div>
               ))}
               {events.map((event) => {
-                const startMinutes =
-                  parseInt(event.start.split(":")[0]) * 60 +
-                  parseInt(event.start.split(":")[1]);
-                const endMinutes =
-                  parseInt(event.end.split(":")[0]) * 60 +
-                  parseInt(event.end.split(":")[1]);
-                const duration = endMinutes - startMinutes;
-                const top = (startMinutes / 60) * 5;
-                const height = (duration / 60) * 5;
-
-                return (
-                  <div
-                    key={event.id}
-                    className={`absolute left-1 right-1 p-2 rounded ${event.color} text-white overflow-hidden`}
-                    style={{
-                      top: `${top}rem`,
-                      height: `${height}rem`,
-                    }}
-                  >
-                    <h3 className="font-semibold">{event.title}</h3>
-                    <p className="text-sm">{`${event.start} - ${event.end}`}</p>
-                  </div>
-                );
+                return <Event key={event.id} event={event} />;
               })}
             </div>
           </div>
